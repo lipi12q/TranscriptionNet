@@ -149,7 +149,7 @@ def plot_loss_figure(epochs, train_loss, valid_loss):
     plt.rcParams['axes.unicode_minus'] = False
     plt.figure(figsize=(7, 7), dpi=144)
 
-    plt.title('FunDNN loss figures')
+    plt.title('Loss figure')
     plt.plot(range(epochs), train_loss, color='red', linestyle='--', label='train loss', linewidth=2)
     plt.plot(range(epochs), valid_loss, color='dodgerblue', linestyle='-', label='valid loss', linewidth=2)
     plt.legend(loc='upper right', frameon=False)
