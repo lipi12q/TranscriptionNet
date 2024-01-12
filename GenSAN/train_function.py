@@ -13,12 +13,12 @@ from GenSAN.utils import adjust_learning_rate
 from GenSAN.model import GenSAN_model
 
 
-def train_function(train_model, train_dataloader, optimizer, beta):
+def train_function(model, train_dataloader, optimizer, beta):
     """
     GenSAN model training function.
 
     Args:
-        train_model : GenSAN initialization model.
+        model : GenSAN initialization model.
         train_dataloader : Training set batch data.
         optimizer : Adam optimizer.
         beta (float): Weight hyperparameter of the combination of mse and pcc(see Class TranscriptionNet_Hyperparameters).
@@ -32,16 +32,16 @@ def train_function(train_model, train_dataloader, optimizer, beta):
     pcc_loss = 0
     num_batches = len(train_dataloader)
 
-    train_model.train()
+    model.train()
     for node_feature, gecs_data in train_dataloader:
         node_feature = node_feature.to(Device())
         gecs_data = gecs_data.to(Device())
 
         optimizer.zero_grad()
-        predict_gecs = train_model(node_feature)
+        predict_gecs = model(node_feature)
         loss, mse, pcc = PMSELoss(gecs_data, predict_gecs, beta)
         loss.backward()
-        torch.nn.utils.clip_grad_norm_(train_model.parameters(), 0.5)
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5)
 
         optimizer.step()
         with torch.no_grad():
@@ -55,12 +55,12 @@ def train_function(train_model, train_dataloader, optimizer, beta):
     return train_loss, mse_loss, pcc_loss
 
 
-def valid_function(eval_model, valid_dataloader, beta):
+def valid_function(model, valid_dataloader, beta):
     """
     GenSAN model validation function.
 
     Args:
-        eval_model : The GenSAN model after training on the training set.
+        model : The GenSAN model after training on the training set.
         valid_dataloader : Validation set batch data.
         beta (float): Weight hyperparameter of the combination of mse and pcc(see Class TranscriptionNet_Hyperparameters).
 
@@ -73,13 +73,13 @@ def valid_function(eval_model, valid_dataloader, beta):
     pcc_loss = 0
     num_batches = len(valid_dataloader)
 
-    eval_model.eval()
+    model.eval()
     with torch.no_grad():
         for node_feature, gecs_data in valid_dataloader:
             node_feature = node_feature.to(Device())
             gecs_data = gecs_data.to(Device())
 
-            predict_gecs = eval_model(node_feature)
+            predict_gecs = model(node_feature)
             loss, mse, pcc = PMSELoss(gecs_data, predict_gecs, beta)
             valid_loss += loss.item()
             mse_loss += mse.item()
@@ -91,18 +91,18 @@ def valid_function(eval_model, valid_dataloader, beta):
     return valid_loss, mse_loss, pcc_loss
 
 
-def test_evaluate(test_model, pre_gecs_test, gecs_test):
+def test_evaluate(best_model, pre_gecs_test, gecs_test):
     """
     GenSAN model test evaluation function.
 
     Args:
-        test_model : The GenSAN model after all iterations of training.
+        best_model : The GenSAN model after all iterations of training.
         pre_gecs_test (tensor): Test set of pre-GECs.
         gecs_test (ndarray): Test set of GECs data.
     """
 
     feature_test = pre_gecs_test.to(Device())
-    feature_test_predict = test_model(feature_test).cpu().detach().numpy()
+    feature_test_predict = best_model(feature_test).cpu().detach().numpy()
 
     # feature_test_predict_df = pd.DataFrame(feature_test_predict, index=net_test.index)
     # feature_test_predict_df.to_csv(save_path + "feature_test_predict.csv", index=True)
@@ -180,11 +180,11 @@ def train(epochs, model, train_dataloader, valid_dataloader, optimizer, beta, wa
     for epoch in range(epochs):
         epoch_start_time = time.time()
 
-        tra_loss, tra_mse_loss, tra_cor_loss = train_function(train_model=model,
+        tra_loss, tra_mse_loss, tra_cor_loss = train_function(model=model,
                                                               train_dataloader=train_dataloader,
                                                               optimizer=optimizer,
                                                               beta=beta)
-        val_loss, val_mse_loss, val_cor_loss = valid_function(eval_model=model,
+        val_loss, val_mse_loss, val_cor_loss = valid_function(model=model,
                                                               valid_dataloader=valid_dataloader,
                                                               beta=beta)
         train_losses.append(tra_loss)
