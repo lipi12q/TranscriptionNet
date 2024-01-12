@@ -107,22 +107,22 @@ def test_evaluate(best_model, pre_gecs_test, gecs_test):
     # feature_test_predict_df = pd.DataFrame(feature_test_predict, index=net_test.index)
     # feature_test_predict_df.to_csv(save_path + "feature_test_predict.csv", index=True)
 
+    d = []
     pcc = []
     for i in range(feature_test_predict.shape[0]):
         pearson = np.corrcoef(feature_test_predict[i], gecs_test[i])[0, 1]
+        item_d, _ = stats.ks_2samp(feature_test_predict[i], gecs_test[i])
         pcc.append(pearson)
+        d.append(item_d)
     abs_pcc = abs(np.array(pcc))
     abs_pcc_mean = abs_pcc.mean()
+    d_mean = np.array(d).mean()
 
     mse = mean_squared_error(gecs_test, feature_test_predict)
 
-    gecs_test_flaten = np.ravel(gecs_test)
-    feature_test_predict_flaten = np.ravel(feature_test_predict)
-    d, p_value = stats.ks_2samp(gecs_test_flaten, feature_test_predict_flaten)
-
     print('=' * 30)
     print('test evaluate result:\nAverage pcc: {}\nAverage mse: {}\nAverage D: {}'
-          .format(abs_pcc_mean, mse, d))
+          .format(abs_pcc_mean, mse, d_mean))
     print('=' * 30)
 
     # return abs_pearson
