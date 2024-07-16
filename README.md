@@ -29,7 +29,7 @@ from this project's root directory.
 
 ## 📁 Example input data
 
-`/example/raw_data/` Raw data, including network integration features, gene expression change (GECs) data of 978 landmark genes in three types of RNAi, OE, and CRISPR.
+`/example/raw_data/` Raw data, including network integration features, gene expression change (GECs) data of 978 landmark genes in three types of RNAi, OE, and CRISPR.  
 
 `data_process.py` The raw data processing process, dividing the training set, the validation set, and the test set.
 
