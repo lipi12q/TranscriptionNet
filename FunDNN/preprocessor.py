@@ -34,7 +34,7 @@ def load_data(input_path, file_name):
     elif file_name == "GECs_dict.pkl":
         train_tensor = torch.FloatTensor(datasets_dict['train'].sort_index().values)
         valid_tensor = torch.FloatTensor(datasets_dict['valid'].sort_index().values)
-        test_array = datasets_dict['test'].sort_index().values
+        test_array = datasets_dict['test'].sort_index()
 
         print('GECS data dimension:\ntrain data:{}\nvalid data:{}\ntest data:{}\n'
               .format(train_tensor.shape, valid_tensor.shape, test_array.shape))
