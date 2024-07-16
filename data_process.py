@@ -50,12 +50,16 @@ def datasets_split(GECs, feature, save_path):
     Datasets split and data scaler.
     """
     GECs_filter = GECs[GECs.index.isin(feature.index)]
+    GECs_train, GECs_test, GECs_valid = train_test_val_split(cmap_scaled, 0.7, 0.2, 0.1)
 
     scaler = MinMaxScaler(feature_range=(-1, 1))
-    cmap_scaled = scaler.fit_transform(GECs_filter.values)
-    cmap_scaled = pd.DataFrame(cmap_scaled, index=GECs_filter.index, columns=GECs_filter.columns).sort_index()
-
-    GECs_train, GECs_test, GECs_valid = train_test_val_split(cmap_scaled, 0.7, 0.2, 0.1)
+    GECs_train_scaled = scaler.fit_transform(GECs_train.values)
+    GECs_test_scaled = scaler.fit_transform(GECs_test.values)
+    GECs_valid_scaled = scaler.fit_transform(GECs_valid.values)
+    
+    GECs_train = pd.DataFrame(GECs_train_scaled, index=GECs_train.index, columns=GECs_filter.columns).sort_index()
+    GECs_test = pd.DataFrame(GECs_test_scaled, index=GECs_test.index, columns=GECs_filter.columns).sort_index()
+    GECs_valid = pd.DataFrame(GECs_valid_scaled, index=GECs_valid.index, columns=GECs_filter.columns).sort_index()
 
     feature_train = feature[feature.index.isin(GECs_train.index)].sort_index()
     feature_test = feature[feature.index.isin(GECs_test.index)].sort_index()
