@@ -29,7 +29,7 @@ from this project's root directory.
 
 ## 📁 Example input data
 
-`/example/raw_data/` Raw data, including network integration features, gene expression change (GECs) data of 978 landmark genes in three types of RNAi, OE, and CRISPR.  
+`/example/raw_data/` Raw data, including network integration features, gene expression change (GECs) data of 978 landmark genes in three types of RNAi, OE, and CRISPR. The GECs files for RNAi, OE and CRISPR are transcription profile data of 978 landmark genes induced by 4449, 3518 and 5139 perturbation genes, respectively. The row names are the Entrez IDs of the perturbation genes, and the column names are the Entrez IDs of the 978 landmark genes.    
 
 `data_process.py` The raw data processing process, dividing the training set, the validation set, and the test set.
 
