@@ -50,7 +50,7 @@ def datasets_split(GECs, feature, save_path):
     Datasets split and data scaler.
     """
     GECs_filter = GECs[GECs.index.isin(feature.index)]
-    GECs_train, GECs_test, GECs_valid = train_test_val_split(cmap_scaled, 0.7, 0.2, 0.1)
+    GECs_train, GECs_test, GECs_valid = train_test_val_split(GECs_filter, 0.7, 0.2, 0.1)
 
     scaler = MinMaxScaler(feature_range=(-1, 1))
     GECs_train_scaled = scaler.fit_transform(GECs_train.values)
